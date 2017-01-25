@@ -1,4 +1,4 @@
-FROM splunk/universalforwarder:6.5.0
+FROM dayreiner/splunk-universalforwarder:6.5.1
 
 ENV SPLUNK_BACKUP_APP ${SPLUNK_BACKUP_DEFAULT_ETC}/etc/apps
 
@@ -8,12 +8,13 @@ COPY ta-dockerlogs_fileinput ${SPLUNK_BACKUP_APP}/ta-dockerlogs_fileinput
 RUN rm -rf ${SPLUNK_BACKUP_APP}/ta-dockerlogs_fileinput/default/savedsearches.conf
 
 # Enable Docker Stats Collection
-ENV DOCKER_VERSION 1.9.0
+ENV DOCKER_VERSION 1.13.0
 COPY ta-dockerstats ${SPLUNK_BACKUP_APP}/ta-dockerstats
 RUN chmod +x ${SPLUNK_BACKUP_APP}/ta-dockerstats/bin/*.sh
 RUN apt-get update \
-    && apt-get install -y wget jq \
-    && wget -qO ${SPLUNK_BACKUP_APP}/ta-dockerstats/bin/docker https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
+    && apt-get install -y curl jq \
+    && curl -fsSLO https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz \
+    && tar --strip-components=1 -xvzf docker-${DOCKER_VERSION}.tgz -C ${SPLUNK_BACKUP_APP}/ta-dockerstats/bin \
     && chmod +x ${SPLUNK_BACKUP_APP}/ta-dockerstats/bin/docker \
-    && apt-get purge -y --auto-remove wget \
+    && apt-get purge -y --auto-remove curl \
     && rm -rf /var/lib/apt/lists/*

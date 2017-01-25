@@ -1,4 +1,4 @@
-docker push splunk/splunk:6.5.0-monitor
-docker push splunk/splunk:latest
+docker push dayreiner/splunk:6.5.1-monitor
+docker push dayreiner/splunk:latest
 
 
